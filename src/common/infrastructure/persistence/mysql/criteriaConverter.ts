@@ -132,7 +132,10 @@ export class MysqlCriteriaConverter implements CriteriaConverter<Criteria, Mysql
   }
 
   private inFilter(filter: Filter): MysqlFilter {
-    const values = (filter.value.value as string).split(',').map((v) => v.trim());
+    const values = filter.value.value
+      .toString()
+      .split(',')
+      .map((v) => v.trim());
     return {
       field: `${filter.field.value} ${filter.operator.value} (${Array(values.length).fill('?').join(', ')})`,
       value: values,
@@ -140,7 +143,10 @@ export class MysqlCriteriaConverter implements CriteriaConverter<Criteria, Mysql
   }
 
   private notInFilter(filter: Filter): MysqlFilter {
-    const values = (filter.value.value as string).split(',').map((v) => v.trim());
+    const values = filter.value.value
+      .toString()
+      .split(',')
+      .map((v) => v.trim());
     return {
       field: `${filter.field.value} ${filter.operator.value} (${Array(values.length).fill('?').join(', ')})`,
       value: values,
