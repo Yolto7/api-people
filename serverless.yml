@@ -1,0 +1,108 @@
+service: ${self:custom.serviceName}
+frameworkVersion: '3'
+
+custom:
+  stage: ${opt:stage, "dev"}
+  prefix: cuida
+  stackNumber: '00'
+  stackName: people
+  prefixName: ${self:custom.prefix}-${self:custom.stage}
+  prefixLambdaName: ${self:custom.prefixName}-ld-${self:custom.stackNumber}-${self:custom.stackName}
+  serviceName: ${self:custom.prefixName}-st-${self:custom.stackNumber}-${self:custom.stackName}
+  roleName: ${self:custom.prefixName}-role-${self:custom.stackNumber}-${self:custom.stackName}
+  appBucketShared: ${self:custom.prefixName}-bucket-${self:custom.stackNumber}-app-shared
+  serverless-offline:
+    httpPort: 3000
+    noPrependStageInUrl: true
+    prefix: ${self:custom.stackName}
+  dotenv:
+    path: .env.${self:provider.stage}
+    exclude:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_REGION_NAME
+      - AWS_SESSION_TOKEN
+  prune:
+    automatic: true
+    number: 3
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${opt:region, "us-east-1"}
+  profile: cuida-${self:custom.stage}
+  stage: ${self:custom.stage}
+  stackName: ${self:custom.serviceName}
+  timeout: 30
+  apiName: ${self:service}
+  apiGateway:
+    binaryMediaTypes:
+      - multipart/form-data
+  deploymentBucket:
+    name: ${self:custom.appBucketShared}
+  stackTags:
+    ENV: ${self:custom.stage}
+  iam:
+    role:
+      name: ${self:custom.roleName}
+      tags:
+        ENV: ${self:custom.stage}
+
+plugins:
+  - serverless-offline
+  - serverless-deployment-bucket
+  - serverless-prune-plugin
+  - serverless-dotenv-plugin
+
+package:
+  individually: true
+  exclude:
+    - ./**
+  include:
+    - dist/index.js
+    - node_modules/**
+
+functions:
+  search:
+    handler: dist/index.search
+    name: ${self:custom.prefixLambdaName}-search
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-search
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
+
+  getById:
+    handler: dist/index.getById
+    name: ${self:custom.prefixLambdaName}-getById
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-getById
+    events:
+      - http:
+          path: /{id}
+          method: get
+          cors: true
+
+  create:
+    handler: dist/index.create
+    name: ${self:custom.prefixLambdaName}-create
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-create
+    events:
+      - http:
+          path: /
+          method: post
+          cors: true
+
+  update:
+    handler: dist/index.update
+    name: ${self:custom.prefixLambdaName}-update
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-update
+    events:
+      - http:
+          path: /{id}
+          method: put
+          cors: true

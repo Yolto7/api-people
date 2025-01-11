@@ -1,0 +1,82 @@
+import { ConfigBase } from '@common';
+import { cuida_CONSTANTS } from '@common';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+export interface Config extends ConfigBase {
+  AWS_APP_SHARED_BUCKET_NAME: string;
+
+  USERS_TABLE_NAME: string;
+
+  USERS_EVENT_BUS_NAME: string;
+
+  SNS_PUSH_NOTIFICATION_APP_ARN: string;
+
+  MULTIFACTORS_API_BASE_URL: string;
+  IDENTITIES_API_BASE_URL: string;
+  ACCESSES_API_BASE_URL: string;
+  ONBOARDINGS_API_BASE_URL: string;
+  GUESTS_API_BASE_URL: string;
+  BUILDINGS_API_BASE_URL: string;
+
+  cuida_SYS_USER_EMAIL: string;
+  cuida_SYS_USER_PASSWORD: string;
+}
+
+const {
+  NODE_ENV = cuida_CONSTANTS.ENVIRONMENTS.STG,
+
+  AWS_ACCESS_KEY_ID = '',
+  AWS_SECRET_ACCESS_KEY = '',
+  AWS_REGION_NAME = '',
+
+  AWS_APP_SHARED_BUCKET_NAME = '',
+
+  USERS_TABLE_NAME = '',
+
+  USERS_EVENT_BUS_NAME = '',
+
+  SNS_PUSH_NOTIFICATION_APP_ARN = '',
+
+  MULTIFACTORS_API_BASE_URL = '',
+  IDENTITIES_API_BASE_URL = '',
+  ACCESSES_API_BASE_URL = '',
+  ONBOARDINGS_API_BASE_URL = '',
+  GUESTS_API_BASE_URL = '',
+  BUILDINGS_API_BASE_URL = '',
+
+  cuida_SYS_USER_EMAIL = '',
+  cuida_SYS_USER_PASSWORD = '',
+} = process.env;
+
+export const config: Config = {
+  NODE_ENV,
+
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_REGION_NAME,
+
+  AWS_APP_SHARED_BUCKET_NAME,
+
+  USERS_TABLE_NAME,
+
+  USERS_EVENT_BUS_NAME,
+
+  SNS_PUSH_NOTIFICATION_APP_ARN,
+
+  MULTIFACTORS_API_BASE_URL,
+  IDENTITIES_API_BASE_URL,
+  ACCESSES_API_BASE_URL,
+  ONBOARDINGS_API_BASE_URL,
+  GUESTS_API_BASE_URL,
+  BUILDINGS_API_BASE_URL,
+
+  cuida_SYS_USER_EMAIL,
+  cuida_SYS_USER_PASSWORD,
+
+  isDebug: NODE_ENV === cuida_CONSTANTS.ENVIRONMENTS.DEBUG,
+  isDevelopment: NODE_ENV === cuida_CONSTANTS.ENVIRONMENTS.DEV,
+  isStaging: NODE_ENV === cuida_CONSTANTS.ENVIRONMENTS.STG,
+  isProduction: NODE_ENV === cuida_CONSTANTS.ENVIRONMENTS.PROD,
+};
