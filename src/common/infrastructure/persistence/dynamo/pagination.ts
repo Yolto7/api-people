@@ -1,8 +1,8 @@
 import { QueryPage } from '../../../domain/criteria/query';
 
-export interface DynamoPagination {
+interface DynamoPagination {
   ExclusiveStartKey?: string;
-  Limit: number;
+  Limit?: number;
 }
 
 export function dynamoNextTokenResolver(nextToken?: unknown): string | undefined {
