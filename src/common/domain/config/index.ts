@@ -1,9 +1,13 @@
 export interface ConfigBase {
   NODE_ENV: string;
 
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
   AWS_REGION: string;
+
+  DATABASE_HOST: string;
+  DATABASE_PORT: number;
+  DATABASE_USER: string;
+  DATABASE_PASSWORD: string;
+  DATABASE_NAME: string;
 
   isDebug: boolean;
   isDevelopment: boolean;

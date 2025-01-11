@@ -11,7 +11,7 @@ import { AppError, ErrorTypes } from '../../../domain/error';
 type MysqlFilter = { field: string; value: FilterValueTypes | string[] | number[] };
 type MysqlGenerateFilter = { filters: string; values: FilterValueTypes[] };
 
-export function filterDeleted(column = 'deleted'): Map<string, FilterValueTypes> {
+export function mysqlFilterDeleted(column = 'deleted'): Map<string, FilterValueTypes> {
   return new Map<string, FilterValueTypes>([
     ['field', column],
     ['operator', Operator.EQUAL],

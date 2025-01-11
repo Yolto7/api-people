@@ -15,7 +15,7 @@ interface DynamoFilter {
   value: FilterValueTypes | Record<string, any>;
 }
 
-export const filterDeleted = new Map<string, FilterValueTypes>([
+export const dynamoFilterDeleted = new Map<string, FilterValueTypes>([
   ['field', 'deleted'],
   ['operator', Operator.EQUAL],
   ['value', false],

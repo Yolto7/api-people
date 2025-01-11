@@ -1,5 +1,5 @@
 import { formatDate } from '../../infrastructure/helpers/date';
-import { cuida_CONSTANTS } from '../constants';
+import { CUIDA_CONTANST } from '../constants';
 import { UniqueEntityId } from './uniqueEntityId';
 
 export interface AuditEntry {
@@ -65,18 +65,18 @@ export abstract class Entity<T extends AuditEntry> {
     return Object.values(this.props).some((valueObject) => valueObject.isModified);
   }
 
-  createNewEntryAudit(username: string = cuida_CONSTANTS.USERS.SYSTEM) {
+  createNewEntryAudit(username?: string) {
     this.props.createdAt = formatDate(new Date());
-    this.props.createdBy = username;
+    this.props.createdBy = username || CUIDA_CONTANST.USERS.SYSTEM;
     this.props.deleted = false;
   }
-  createUpdateEntryAudit(username: string = cuida_CONSTANTS.USERS.SYSTEM) {
+  createUpdateEntryAudit(username?: string) {
     this.props.updatedAt = formatDate(new Date());
-    this.props.updatedBy = username;
+    this.props.updatedBy = username || CUIDA_CONTANST.USERS.SYSTEM;
   }
-  createDeleteEntryAudit(username: string = cuida_CONSTANTS.USERS.SYSTEM) {
+  createDeleteEntryAudit(username?: string) {
     this.props.deletedAt = formatDate(new Date());
-    this.props.deletedBy = username;
+    this.props.deletedBy = username || CUIDA_CONTANST.USERS.SYSTEM;
     this.props.deleted = true;
   }
 }

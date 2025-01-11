@@ -1,23 +1,3 @@
-export const bufferMimeType = {
-  png: '89504e47', // PNG
-  jpg: 'ffd8ffe0', // JPG/JPEG
-  jpeg: 'ffd8ffe1', // JPG/JPEG
-  gif: '47494638', // GIF
-  bmp: '424d', // BMP
-  webp: '52494646', // WEBP
-};
-
-export function getBufferMimeType(buffer: Buffer) {
-  const header = buffer.toString('hex', 0, 8);
-  for (const [format, magic] of Object.entries(bufferMimeType)) {
-    if (header.startsWith(magic)) {
-      return format;
-    }
-  }
-
-  return '';
-}
-
 export function getMethodsByPrototype<T>(prototype: T): { [key: string]: keyof T } {
   const methods: { [key: string]: keyof T } = {};
 
@@ -43,4 +23,20 @@ export async function streamToBuffer(stream: any) {
   }
 
   return Buffer.concat(chunks);
+}
+
+export function translateKey(value: string): string {
+  const keys: Record<string, string> = {
+    name: 'nombre',
+    height: 'altura',
+    mass: 'masa',
+    hair_color: 'colorPelo',
+    skin_color: 'colorPiel',
+    eye_color: 'colorOjo',
+    birth_year: 'aniversario',
+    gender: 'genero',
+    created: 'fechaFundado',
+  };
+
+  return keys[value];
 }

@@ -1,10 +1,10 @@
-import { cuida_CONSTANTS } from '../../domain/constants';
+import { CUIDA_CONTANST } from '../../domain/constants';
 import { SysTokenAsyncContext, AsyncContext } from '../context';
 
 export class SysTokenProvider {
   get(): SysTokenAsyncContext {
     return AsyncContext.get<SysTokenAsyncContext>(
-      cuida_CONSTANTS.ASYNCCONTEXT.SYS_TOKEN
+      CUIDA_CONTANST.ASYNCCONTEXT.SYS_TOKEN
     ) as SysTokenAsyncContext;
   }
 }

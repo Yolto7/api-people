@@ -2,6 +2,7 @@
 export * from './domain/aggregate';
 
 export * from './domain/config';
+export * from './domain/constants';
 
 export * from './domain/criteria';
 export * from './domain/criteria/converter';
@@ -38,6 +39,11 @@ export * from './domain/entity/uniqueEntityId';
 // Infrastructure
 export * from './infrastructure/axios';
 
+export * from './infrastructure/context';
+export * from './infrastructure/helpers/date';
+export * from './infrastructure/helpers/xss';
+export * from './infrastructure/helpers/index';
+
 export * from './infrastructure/eventBus/eventBridge/eventBridgeEventBus';
 
 export * from './infrastructure/interceptors/error.interceptor';
@@ -53,14 +59,11 @@ export * from './infrastructure/persistence/dynamo/clientFactory';
 export * from './infrastructure/persistence/dynamo/criteriaConverter';
 export * from './infrastructure/persistence/dynamo/pagination';
 
+export * from './infrastructure/persistence/mysql/clientFactory';
+export * from './infrastructure/persistence/mysql/criteriaConverter';
+export * from './infrastructure/persistence/mysql/pagination';
+
 export * from './infrastructure/providers/sysToken.provider';
 export * from './infrastructure/providers/userAuth.provider';
 
 export * from './infrastructure/validator/zod.validator';
-
-// Utils
-export * from './domain/constants';
-export * from './infrastructure/context';
-export * from './infrastructure/helpers/date';
-export * from './infrastructure/helpers/xss';
-export * from './infrastructure/helpers/index';

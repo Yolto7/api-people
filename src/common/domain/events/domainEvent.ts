@@ -1,5 +1,5 @@
 import { RequestAsyncContext, AsyncContext } from '../../infrastructure/context';
-import { cuida_CONSTANTS } from '../constants';
+import { CUIDA_CONTANST } from '../constants';
 import { UniqueEntityId, UniqueId } from '../entity/uniqueEntityId';
 import { getToday } from '../../infrastructure/helpers/date';
 
@@ -29,6 +29,6 @@ export abstract class DomainEvent {
     this.eventName = eventName;
     this.eventId = eventId || UniqueEntityId.random();
     this.occurredOn = occurredOn || getToday('YYYY-MM-DD HH:mm:ss');
-    this.context = AsyncContext.get<RequestAsyncContext>(cuida_CONSTANTS.ASYNCCONTEXT.REQUEST);
+    this.context = AsyncContext.get<RequestAsyncContext>(CUIDA_CONTANST.ASYNCCONTEXT.REQUEST);
   }
 }

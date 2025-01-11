@@ -1,4 +1,4 @@
-export enum cuidaRole {
+export enum CuidaRole {
   // SYSTEM
   SYS = 'SYS',
 

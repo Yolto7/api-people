@@ -1,44 +1,29 @@
 import { createContainer, InjectionMode, asValue, AwilixContainer, asClass } from 'awilix';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 import {
   Logger,
   WinstonLogger,
   UserAuthProvider,
-  DynamoClientFactory,
   ErrorInterceptor,
-  EventBridgeEventBus,
   EventMiddleware,
   ContextMiddleware,
   SysTokenProvider,
   SysTokenMiddleware,
-  DynamoDbCriteriaConverter,
+  MysqlCriteriaConverter,
+  MysqlClientFactory,
 } from '@common';
 
 import { Config, config } from '@config';
-import { UserCreateCommandService } from '@application/services/commands/user-create.command.service';
-import { UserUpdateCommandService } from '@application/services/commands/user-update.command.service';
-import { UserPhotoUploadCommandService } from '@application/services/commands/userPhoto-upload.command.service';
-import { UserQueriesService } from '@application/services/queries/user.query.service';
-import { UserDomainService } from '@domain/services/user.domain.service';
-import { BucketAdapter } from '@infrastructure/adapters/bucket.adapter';
-import { UserDynamoDbRepository } from '@infrastructure/repositories/user-dynamodb.repository';
-import UserPrivateController from '@presentation/private/controllers/user.controller';
-import UserPublicController from '@presentation/public/controllers/user.controller';
-import { UserVerifyCommandService } from '@application/services/commands/user-verifyCode.command.service';
-import { MultifactorProxyAdapter } from '@infrastructure/adapters/multifactorProxy-axios.adapter';
-import { UserResendCodeCommandService } from '@application/services/commands/user-resendCode.command.service';
-import { RekognitionAdapter } from '@infrastructure/adapters/rekognition.adapter';
-import { UserPhotoCompareCommandService } from '@application/services/commands/userPhoto-compare.command.service';
-import { UserSendCodeEventServiceOnUserCreated } from '@application/services/events/user-sendCode.event.service';
-import { AccessProxyAdapter } from '@infrastructure/adapters/accessProxy-axios.adapter';
-import { OnboardingProxyAdapter } from '@infrastructure/adapters/onboardingProxy-axios.adapter';
-import { AccessCreateEventServiceOnUserVerified } from '@application/services/events/access-create.event.service';
-import { SnsAdapter } from '@infrastructure/adapters/sns.adapter';
+import { PeopleCreateCommandService } from '@application/services/commands/people-create.command.service';
+import { PeopleQueriesService } from '@application/services/queries/people.query.service';
+import { PeopleDomainService } from '@domain/services/people.domain.service';
+import { SwapiProxyAdapter } from '@infrastructure/adapters/swapiProxy-axios.adapter';
+import { PeopleMysqlRepository } from '@infrastructure/repositories/people-mysql.repository';
+import { PeopleController } from '@presentation/controllers/people.controller';
 
 export interface Cradle {
   config: Config;
-  dynamoDb: DynamoDBClient;
+  db: MysqlClientFactory;
   logger: Logger;
 
   contextMiddleware: ContextMiddleware;
@@ -49,35 +34,19 @@ export interface Cradle {
   sysTokenProvider: SysTokenProvider;
   userAuthProvider: UserAuthProvider;
 
-  dynamoDbCriteriaConverter: DynamoDbCriteriaConverter;
+  mysqlCriteriaConverter: MysqlCriteriaConverter;
 
-  userDynamoDbRepository: UserDynamoDbRepository;
+  peopleMysqlRepository: PeopleMysqlRepository;
 
-  userDomainService: UserDomainService;
+  peopleDomainService: PeopleDomainService;
 
-  userQueriesService: UserQueriesService;
+  peopleQueriesService: PeopleQueriesService;
 
-  userCreateCommandService: UserCreateCommandService;
-  userUpdateCommandService: UserUpdateCommandService;
-  userPhotoUploadCommandService: UserPhotoUploadCommandService;
-  userPhotoCompareCommandService: UserPhotoCompareCommandService;
-  userResendCodeCommandService: UserResendCodeCommandService;
-  userVerifyCommandService: UserVerifyCommandService;
+  peopleCreateCommandService: PeopleCreateCommandService;
 
-  userSendCodeEventServiceOnUserCreated: UserSendCodeEventServiceOnUserCreated;
-  accessCreateEventServiceOnUserVerified: AccessCreateEventServiceOnUserVerified;
+  swapiProxyAdapter: SwapiProxyAdapter;
 
-  accessProxyAdapter: AccessProxyAdapter;
-  bucketAdapter: BucketAdapter;
-  multifactorProxyAdapter: MultifactorProxyAdapter;
-  onboardingProxyAdapter: OnboardingProxyAdapter;
-  rekognitionAdapter: RekognitionAdapter;
-  snsAdapter: SnsAdapter;
-
-  eventBridgeEventBus: EventBridgeEventBus;
-
-  userPrivateController: UserPrivateController;
-  userPublicController: UserPublicController;
+  peopleController: PeopleController;
 }
 
 export const loadContainer = (): AwilixContainer<Cradle> => {
@@ -107,110 +76,49 @@ export const loadContainer = (): AwilixContainer<Cradle> => {
     userAuthProvider: asClass(UserAuthProvider).singleton(),
 
     // Criteria
-    dynamoDbCriteriaConverter: asClass(DynamoDbCriteriaConverter).singleton(),
+    mysqlCriteriaConverter: asClass(MysqlCriteriaConverter).singleton().scoped(),
 
     // Repositories
-    userDynamoDbRepository: asClass(UserDynamoDbRepository).scoped(),
+    peopleMysqlRepository: asClass(PeopleMysqlRepository).scoped(),
 
     // Domain Services
-    userDomainService: asClass(UserDomainService)
+    peopleDomainService: asClass(PeopleDomainService)
       .inject((container: AwilixContainer) => ({
-        userRepository: container.cradle.userDynamoDbRepository,
+        peopleRepository: container.cradle.peopleMysqlRepository,
       }))
       .scoped(),
 
-    // Application Queries Services
-    userQueriesService: asClass(UserQueriesService)
+    // Application Services
+    peopleQueriesService: asClass(PeopleQueriesService)
       .inject((container: AwilixContainer) => ({
-        userRepository: container.cradle.userDynamoDbRepository,
+        peopleRepository: container.cradle.peopleMysqlRepository,
+        swapiProxyPort: container.cradle.swapiProxyAdapter,
       }))
       .scoped(),
 
-    //Application Commands Services
-    userCreateCommandService: asClass(UserCreateCommandService)
+    peopleCreateCommandService: asClass(PeopleCreateCommandService)
       .inject((container: AwilixContainer) => ({
-        userRepository: container.cradle.userDynamoDbRepository,
-        eventBus: container.cradle.eventBridgeEventBus,
-      }))
-      .scoped(),
-    userUpdateCommandService: asClass(UserUpdateCommandService)
-      .inject((container: AwilixContainer) => ({
-        userRepository: container.cradle.userDynamoDbRepository,
-        snsPort: container.cradle.snsAdapter,
-      }))
-      .scoped(),
-    userPhotoUploadCommandService: asClass(UserPhotoUploadCommandService)
-      .inject((container: AwilixContainer) => ({
-        bucketPort: container.cradle.bucketAdapter,
-        rekognitionPort: container.cradle.rekognitionAdapter,
-      }))
-      .scoped(),
-    userPhotoCompareCommandService: asClass(UserPhotoCompareCommandService)
-      .inject((container: AwilixContainer) => ({
-        bucketPort: container.cradle.bucketAdapter,
-        rekognitionPort: container.cradle.rekognitionAdapter,
-      }))
-      .scoped(),
-    userResendCodeCommandService: asClass(UserResendCodeCommandService)
-      .inject((container: AwilixContainer) => ({
-        multifactorProxyPort: container.cradle.multifactorProxyAdapter,
-      }))
-      .scoped(),
-    userVerifyCommandService: asClass(UserVerifyCommandService)
-      .inject((container: AwilixContainer) => ({
-        multifactorProxyPort: container.cradle.multifactorProxyAdapter,
-        eventBus: container.cradle.eventBridgeEventBus,
-      }))
-      .scoped(),
-
-    // Application Events Services
-    userSendCodeEventServiceOnUserCreated: asClass(UserSendCodeEventServiceOnUserCreated)
-      .inject((container: AwilixContainer) => ({
-        multifactorProxyPort: container.cradle.multifactorProxyAdapter,
-      }))
-      .scoped(),
-    accessCreateEventServiceOnUserVerified: asClass(AccessCreateEventServiceOnUserVerified)
-      .inject((container: AwilixContainer) => ({
-        accessProxyPort: container.cradle.accessProxyAdapter,
-        onboardingProxyPort: container.cradle.onboardingProxyAdapter,
+        peopleRepository: container.cradle.peopleMysqlRepository,
       }))
       .scoped(),
 
     // Infrastructure Adapters
-    accessProxyAdapter: asClass(AccessProxyAdapter).singleton(),
-    bucketAdapter: asClass(BucketAdapter).singleton(),
-    multifactorProxyAdapter: asClass(MultifactorProxyAdapter).singleton(),
-    onboardingProxyAdapter: asClass(OnboardingProxyAdapter).singleton(),
-    rekognitionAdapter: asClass(RekognitionAdapter).singleton(),
-    snsAdapter: asClass(SnsAdapter).singleton(),
-
-    // Infrastructure Event Busses
-    eventBridgeEventBus: asClass(EventBridgeEventBus)
-      .inject((container: AwilixContainer) => ({
-        config: {
-          isDebug: container.cradle.config.isDebug,
-          AWS_ACCESS_KEY_ID: container.cradle.config.AWS_ACCESS_KEY_ID,
-          AWS_SECRET_ACCESS_KEY: container.cradle.config.AWS_SECRET_ACCESS_KEY,
-          AWS_REGION_NAME: container.cradle.config.AWS_REGION_NAME,
-          AWS_EVENT_BUS_NAME: container.cradle.config.USERS_EVENT_BUS_NAME,
-        },
-      }))
-      .singleton(),
+    swapiProxyAdapter: asClass(SwapiProxyAdapter).transient(),
 
     // Presentation Controllers
-    userPrivateController: asClass(UserPrivateController).scoped(),
-    userPublicController: asClass(UserPublicController).scoped(),
+    peopleController: asClass(PeopleController).scoped(),
   });
 
   container.register({
-    // DynamoDB
-    dynamoDb: asValue(
-      DynamoClientFactory.getClient(
+    // Database
+    db: asValue(
+      MysqlClientFactory.getInstance(
         {
-          isDebug: container.cradle.config.isDebug,
-          AWS_ACCESS_KEY_ID: container.cradle.config.AWS_ACCESS_KEY_ID,
-          AWS_SECRET_ACCESS_KEY: container.cradle.config.AWS_SECRET_ACCESS_KEY,
-          AWS_REGION_NAME: container.cradle.config.AWS_REGION_NAME,
+          DATABASE_HOST: container.cradle.config.DATABASE_HOST,
+          DATABASE_PORT: container.cradle.config.DATABASE_PORT,
+          DATABASE_USER: container.cradle.config.DATABASE_USER,
+          DATABASE_PASSWORD: container.cradle.config.DATABASE_PASSWORD,
+          DATABASE_NAME: container.cradle.config.DATABASE_NAME,
         },
         container.cradle.logger
       )

@@ -1,4 +1,4 @@
-export const cuida_CONSTANTS = {
+export const CUIDA_CONTANST = {
   ENVIRONMENTS: {
     DEBUG: 'debug',
     DEV: 'development',

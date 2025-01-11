@@ -1,5 +1,5 @@
 import { RequestAsyncContext, AsyncContext } from '../../infrastructure/context';
-import { cuida_CONSTANTS } from '../constants';
+import { CUIDA_CONTANST } from '../constants';
 import { UniqueEntityId, UniqueId } from '../entity/uniqueEntityId';
 
 export interface IntegrationEventInput {
@@ -25,6 +25,6 @@ export abstract class IntegrationEvent {
     this.eventName = eventName;
     this.eventId = eventId || UniqueEntityId.random();
     this.occurredOn = occurredOn || new Date();
-    this.context = AsyncContext.get<RequestAsyncContext>(cuida_CONSTANTS.ASYNCCONTEXT.REQUEST);
+    this.context = AsyncContext.get<RequestAsyncContext>(CUIDA_CONTANST.ASYNCCONTEXT.REQUEST);
   }
 }

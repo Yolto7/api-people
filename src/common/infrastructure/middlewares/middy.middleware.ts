@@ -6,7 +6,7 @@ import httpSecurityHeaders from '@middy/http-security-headers';
 import httpCors from '@middy/http-cors';
 
 import { AsyncContext, RequestAsyncContext, SysTokenAsyncContext } from '../context';
-import { cuida_CONSTANTS } from '../../domain/constants';
+import { CUIDA_CONTANST } from '../../domain/constants';
 
 export interface MiddyLambdaContext extends Context {
   requestAsyncContext: RequestAsyncContext;
@@ -20,8 +20,8 @@ export class MiddyMiddleware {
 
   static use(handler: Handler, middlewares: MiddlewareObj<any>[] = []) {
     return middy((event: APIGatewayProxyEvent, context: MiddyLambdaContext) => {
-      AsyncContext.set(cuida_CONSTANTS.ASYNCCONTEXT.REQUEST, context.requestAsyncContext);
-      AsyncContext.set(cuida_CONSTANTS.ASYNCCONTEXT.SYS_TOKEN, context.sysTokenAsyncContext);
+      AsyncContext.set(CUIDA_CONTANST.ASYNCCONTEXT.REQUEST, context.requestAsyncContext);
+      AsyncContext.set(CUIDA_CONTANST.ASYNCCONTEXT.SYS_TOKEN, context.sysTokenAsyncContext);
 
       return handler(event);
     }).use([

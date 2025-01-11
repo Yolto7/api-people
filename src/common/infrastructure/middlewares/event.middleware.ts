@@ -1,6 +1,6 @@
 import { ScheduledEvent } from 'aws-lambda';
 
-import { cuida_CONSTANTS } from '../../domain/constants';
+import { CUIDA_CONTANST } from '../../domain/constants';
 import { AsyncContext, RequestAsyncContext } from '../context';
 import { Logger } from '../../domain/logger';
 import { SysTokenMiddleware } from './sysToken.middleware';
@@ -18,9 +18,9 @@ export class EventMiddleware {
       this.logger.info(`event: ${JSON.stringify(event)}`);
 
       event.detail.context && (event.detail.context.token = undefined);
-      AsyncContext.set(cuida_CONSTANTS.ASYNCCONTEXT.REQUEST, event.detail.context);
+      AsyncContext.set(CUIDA_CONTANST.ASYNCCONTEXT.REQUEST, event.detail.context);
       AsyncContext.set(
-        cuida_CONSTANTS.ASYNCCONTEXT.SYS_TOKEN,
+        CUIDA_CONTANST.ASYNCCONTEXT.SYS_TOKEN,
         await this.sysTokenMiddleware.getSysToken()
       );
 
