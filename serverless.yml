@@ -74,14 +74,14 @@ functions:
           method: get
           cors: true
 
-  getById:
-    handler: dist/index.getById
-    name: ${self:custom.prefixLambdaName}-getById
+  getSwapiAll:
+    handler: dist/index.getSwapiAll
+    name: ${self:custom.prefixLambdaName}-getSwapiAll
     tags:
-      NAME: ${self:custom.prefixLambdaName}-getById
+      NAME: ${self:custom.prefixLambdaName}-getSwapiAll
     events:
       - http:
-          path: /{id}
+          path: /swapi
           method: get
           cors: true
 
@@ -94,15 +94,4 @@ functions:
       - http:
           path: /
           method: post
-          cors: true
-
-  update:
-    handler: dist/index.update
-    name: ${self:custom.prefixLambdaName}-update
-    tags:
-      NAME: ${self:custom.prefixLambdaName}-update
-    events:
-      - http:
-          path: /{id}
-          method: put
           cors: true
