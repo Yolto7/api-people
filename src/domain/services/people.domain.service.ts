@@ -35,25 +35,23 @@ export class PeopleDomainService {
     !input.includeDeleted && input.filters.push(mysqlFilterDeleted());
 
     const query = new Query({
-        filters: input.filters,
-        orderBy: input.orderBy,
-        orderType: input.orderType,
-        page: input.page,
-        take: input.take,
-        isTotal: input.isTotal,
-        includeDeleted: input.includeDeleted,
-      }),
-      criteria = new Criteria({
+      filters: input.filters,
+      orderBy: input.orderBy,
+      orderType: input.orderType,
+      page: input.page,
+      take: input.take,
+      isTotal: input.isTotal,
+      includeDeleted: input.includeDeleted,
+    });
+
+    return this.peopleRepository.matching(
+      new Criteria({
         filters: Filters.fromValues(query.filters),
         order: Order.fromValues(query.orderBy, query.orderType),
         page: query.page,
         take: query.take,
         isTotal: query.isTotal,
-      });
-
-    return this.peopleRepository.matching({
-      criteria,
-      isTotal: query.isTotal,
-    });
+      })
+    );
   }
 }

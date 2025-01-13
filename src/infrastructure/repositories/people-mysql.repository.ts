@@ -1,14 +1,17 @@
 import { Pool, RowDataPacket } from 'mysql2/promise';
 
-import { AppError, ErrorTypes, Logger, MysqlCriteriaConverter, UserAuthProvider } from '@common';
+import {
+  AppError,
+  Criteria,
+  ErrorTypes,
+  Logger,
+  MysqlCriteriaConverter,
+  UserAuthProvider,
+} from '@common';
 
 import { Config } from '@config';
 import { People } from '@domain/entities/people.entity';
-import {
-  FilterResponse,
-  MatchingInput,
-  PeopleRepository,
-} from '@domain/repositories/people.repository';
+import { FilterResponse, PeopleRepository } from '@domain/repositories/people.repository';
 import { PeopleDomain, PeopleMapper } from '@infrastructure/mappers/people.mapper';
 
 export class PeopleMysqlRepository implements PeopleRepository {
@@ -24,9 +27,9 @@ export class PeopleMysqlRepository implements PeopleRepository {
     this.tableName = this.config.PEOPLE_TABLE_NAME;
   }
 
-  async matching(input: MatchingInput): Promise<FilterResponse> {
+  async matching(criteria: Criteria): Promise<FilterResponse> {
     try {
-      const query = this.mysqlCriteriaConverter.convert(input.criteria),
+      const query = this.mysqlCriteriaConverter.convert(criteria),
         sql = `SELECT id,
                     name,
                     height, 
@@ -40,7 +43,7 @@ export class PeopleMysqlRepository implements PeopleRepository {
                 FROM ${this.tableName}
                 ${query.filter} 
                 ${query.sort} 
-                ${input.isTotal ? '' : query.pagination}`;
+                ${criteria.isTotal ? '' : query.pagination}`;
 
       const [[rows = []], [pagination = []]] = await Promise.all([
           this.db.query<RowDataPacket[]>({

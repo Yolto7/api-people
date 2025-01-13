@@ -13,7 +13,10 @@ export class PeopleValidator extends ZodValidator {
       hairColor: z.string().nonempty(),
       skinColor: z.string().nonempty(),
       eyeColor: z.string().nonempty(),
-      birthYear: z.string().nonempty(),
+      birthYear: z
+        .string()
+        .regex(/^[0-9]{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/)
+        .nonempty(),
       gender: z.string().nonempty(),
     });
 
