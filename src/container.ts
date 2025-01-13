@@ -1,4 +1,5 @@
 import { createContainer, InjectionMode, asValue, AwilixContainer, asClass } from 'awilix';
+import { Pool } from 'mysql2/promise';
 
 import {
   Logger,
@@ -23,7 +24,7 @@ import { PeopleController } from '@presentation/controllers/people.controller';
 
 export interface Cradle {
   config: Config;
-  db: MysqlClientFactory;
+  db: Pool;
   logger: Logger;
 
   contextMiddleware: ContextMiddleware;
@@ -112,7 +113,7 @@ export const loadContainer = (): AwilixContainer<Cradle> => {
   container.register({
     // Database
     db: asValue(
-      MysqlClientFactory.getInstance(
+      MysqlClientFactory.getClient(
         {
           DATABASE_HOST: container.cradle.config.DATABASE_HOST,
           DATABASE_PORT: container.cradle.config.DATABASE_PORT,

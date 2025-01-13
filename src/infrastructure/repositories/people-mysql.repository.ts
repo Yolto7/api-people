@@ -1,13 +1,6 @@
-import { RowDataPacket } from 'mysql2/promise';
+import { Pool, RowDataPacket } from 'mysql2/promise';
 
-import {
-  AppError,
-  ErrorTypes,
-  Logger,
-  MysqlClientFactory,
-  MysqlCriteriaConverter,
-  UserAuthProvider,
-} from '@common';
+import { AppError, ErrorTypes, Logger, MysqlCriteriaConverter, UserAuthProvider } from '@common';
 
 import { Config } from '@config';
 import { People } from '@domain/entities/people.entity';
@@ -24,9 +17,9 @@ export class PeopleMysqlRepository implements PeopleRepository {
   constructor(
     private readonly config: Config,
     private readonly logger: Logger,
-    private readonly db: MysqlClientFactory,
     private readonly mysqlCriteriaConverter: MysqlCriteriaConverter,
-    private readonly userAuthProvider: UserAuthProvider
+    private readonly userAuthProvider: UserAuthProvider,
+    private readonly db: Pool
   ) {
     this.tableName = this.config.PEOPLE_TABLE_NAME;
   }

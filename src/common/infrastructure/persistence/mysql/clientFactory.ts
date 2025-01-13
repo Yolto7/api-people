@@ -21,12 +21,12 @@ export class MysqlClientFactory {
     this.client = this.createPool(this.config);
   }
 
-  static getInstance(config: ConfigDb, logger: Logger): MysqlClientFactory {
+  static getClient(config: ConfigDb, logger: Logger): Pool {
     if (!MysqlClientFactory.instance) {
       MysqlClientFactory.instance = new MysqlClientFactory(config, logger);
     }
 
-    return MysqlClientFactory.instance;
+    return MysqlClientFactory.instance.client;
   }
 
   private createPool(config: ConfigDb): Pool {
