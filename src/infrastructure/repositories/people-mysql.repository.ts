@@ -89,4 +89,28 @@ export class PeopleMysqlRepository implements PeopleRepository {
       throw new AppError(ErrorTypes.BAD_REQUEST, 'Database unavailable', 'ERR_DATABASE');
     }
   }
+
+  async transaction() {
+    try {
+      const connection = await this.db.getConnection();
+
+      try {
+        await connection.beginTransaction();
+
+        await connection.query({
+          sql: `SELECT * FROM people LIMIT 10`,
+        });
+
+        await connection.commit();
+      } catch (error) {
+        await connection.rollback();
+        throw new AppError(ErrorTypes.BAD_REQUEST, 'Database unavailable', 'ERR_DATABASE');
+      } finally {
+        connection.release();
+      }
+    } catch (error) {
+      this.logger.error(`Error in PeopleRepository of transaction: ${JSON.stringify(error)}`);
+      throw new AppError(ErrorTypes.BAD_REQUEST, 'Database unavailable', 'ERR_DATABASE');
+    }
+  }
 }
