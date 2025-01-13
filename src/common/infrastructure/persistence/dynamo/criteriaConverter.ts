@@ -15,31 +15,33 @@ interface DynamoFilter {
   value: FilterValueTypes | Record<string, any>;
 }
 
-export const dynamoFilterDeleted = new Map<string, FilterValueTypes>([
+export const filterDeleted = new Map<string, FilterValueTypes>([
   ['field', 'deleted'],
   ['operator', Operator.EQUAL],
   ['value', false],
 ]);
 
-export enum CommandTypes {
+export enum DynamoCommandTypes {
   QUERY = 'Query',
   SCAN = 'Scan',
 }
 
-export interface DynamoIndexes {
+interface DynamoSecondaryIndexes {
   name: string;
-  partitionKeyName: string;
-  sortKeyName?: string;
+  partitionKey: string;
+  sortKey?: string;
 }
 
 export interface DynamoDbCriteriaConverterInput {
   tableName: string;
   criteria: Criteria;
-  indexes: DynamoIndexes[];
+  partitionKey: string;
+  sortKey?: string;
+  secondaryIndexes?: DynamoSecondaryIndexes[];
 }
 
 export interface DynamoDbCriteriaConverterResult {
-  commandType: CommandTypes;
+  commandType: DynamoCommandTypes;
   params: QueryCommandInput | ScanCommandInput;
 }
 
@@ -68,19 +70,21 @@ export class DynamoDbCriteriaConverter
   convert({
     tableName,
     criteria,
-    indexes,
+    partitionKey,
+    sortKey,
+    secondaryIndexes = [],
   }: DynamoDbCriteriaConverterInput): DynamoDbCriteriaConverterResult {
     const attributeNames: Record<string, string> = {},
       attributeValues: Record<string, any> = {},
       keyConditionExpression: string[] = [],
       filterExpressions: string[] = [];
 
-    const indexFound = this.findMatchingIndex(indexes, criteria.filters.filters);
-    if (indexFound && indexFound.name && !indexFound.partitionKeyName) {
+    const indexFound = this.findSecondaryIndex(secondaryIndexes, criteria.filters.filters);
+    if (indexFound && indexFound.name && !indexFound.partitionKey) {
       throw new AppError(
         ErrorTypes.BAD_REQUEST,
-        'IndexName is provided but partitionKeyName is not provided',
-        'ERR_INDEX_NAME_WITHOUT_PARTITION_KEY'
+        'Secondary index is provided but partitionKey is not provided',
+        'ERR_SECONDARY_INDEX_WITHOUT_PARTITION_KEY'
       );
     }
 
@@ -95,8 +99,10 @@ export class DynamoDbCriteriaConverter
       }
 
       const { expression, value } = transformer(filter);
+      const isKeyField = this.isKeyField(filter.field.value, partitionKey, sortKey);
 
-      indexFound?.partitionKeyName === filter.field.value && filter.operator.value !== Operator.LIKE
+      (isKeyField || indexFound?.partitionKey === filter.field.value) &&
+      filter.operator.value !== Operator.LIKE
         ? keyConditionExpression.push(expression)
         : filterExpressions.push(expression);
 
@@ -107,12 +113,14 @@ export class DynamoDbCriteriaConverter
         : (attributeValues[`:${filter.field.value}`] = value);
     });
 
-    if (indexFound && keyConditionExpression.length) {
+    if (keyConditionExpression.length) {
       return {
-        commandType: CommandTypes.QUERY,
+        commandType: DynamoCommandTypes.QUERY,
         params: {
           TableName: tableName,
-          IndexName: indexFound.name,
+          ...(indexFound && {
+            IndexName: indexFound.name,
+          }),
           KeyConditionExpression: keyConditionExpression.join(' AND '),
           ...(filterExpressions.length && {
             FilterExpression: filterExpressions.join(' AND '),
@@ -131,7 +139,7 @@ export class DynamoDbCriteriaConverter
     }
 
     return {
-      commandType: CommandTypes.SCAN,
+      commandType: DynamoCommandTypes.SCAN,
       params: {
         TableName: tableName,
         ...(filterExpressions.length && {
@@ -150,15 +158,20 @@ export class DynamoDbCriteriaConverter
     } as DynamoDbCriteriaConverterResult;
   }
 
-  private findMatchingIndex(
-    indexes: DynamoIndexes[],
+  private findSecondaryIndex(
+    indexes: DynamoSecondaryIndexes[],
     filters: Filter[]
-  ): DynamoIndexes | undefined {
+  ): DynamoSecondaryIndexes | undefined {
     // Convert filters fields into a Set for fast lookup
     const filterFieldsSet = new Set(filters.map((filter) => filter.field.value));
+    return indexes.find((index) => filterFieldsSet.has(index.partitionKey));
+  }
 
-    // Find the first index whose partitionKeyName exists in the filter fields
-    return indexes.find((index) => filterFieldsSet.has(index.partitionKeyName));
+  private isKeyField(fieldName: string, partitionKey: string, sortKey?: string): boolean {
+    if (!partitionKey) return false;
+
+    const keyFields = [`${partitionKey}`, `${sortKey}`];
+    return keyFields.includes(fieldName);
   }
 
   private equalFilter(filter: Filter): DynamoFilter {
