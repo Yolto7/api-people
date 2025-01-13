@@ -2,16 +2,20 @@ import { format, createLogger, transports, Logger as WinstonLoggerType } from 'w
 import { Logger, Levels } from '../../domain/logger';
 import { ConsoleTransportInstance, FileTransportInstance } from 'winston/lib/winston/transports';
 
+interface Config {
+  isDebug: boolean;
+}
+
 export class WinstonLogger implements Logger {
   private readonly FORMAT_LEVEL_REGEX = /[A-Z]{4,}/g;
-  private logger: WinstonLoggerType;
+  private readonly logger: WinstonLoggerType;
 
-  constructor(isDebug: boolean) {
+  constructor(private readonly config: Config) {
     const loggerTransforms: (FileTransportInstance | ConsoleTransportInstance)[] = [
       new transports.Console(),
     ];
 
-    isDebug &&
+    this.config.isDebug &&
       loggerTransforms.push(
         new transports.File({ filename: `logs/${Levels.DEBUG}.log`, level: Levels.DEBUG }),
         new transports.File({ filename: `logs/${Levels.ERROR}.log`, level: Levels.ERROR }),
