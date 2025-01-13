@@ -39,7 +39,6 @@ export class ContextMiddleware {
         email: jwtPayload.email,
         role: jwtPayload.role,
         isActive: jwtPayload.isActive,
-        isVerified: jwtPayload.isVerified,
       });
 
     return context;

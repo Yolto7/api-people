@@ -8,7 +8,6 @@ export interface UserAuthInfo {
   email: string;
   role: string;
   isActive: boolean;
-  isVerified: boolean;
 }
 
 export interface RequestAsyncContext {

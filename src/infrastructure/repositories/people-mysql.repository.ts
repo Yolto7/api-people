@@ -20,9 +20,9 @@ export class PeopleMysqlRepository implements PeopleRepository {
   constructor(
     private readonly config: Config,
     private readonly logger: Logger,
-    private readonly mysqlCriteriaConverter: MysqlCriteriaConverter,
     private readonly userAuthProvider: UserAuthProvider,
-    private readonly db: Pool
+    private readonly db: Pool,
+    private readonly mysqlCriteriaConverter: MysqlCriteriaConverter
   ) {
     this.tableName = this.config.PEOPLE_TABLE_NAME;
   }

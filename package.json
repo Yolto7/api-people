@@ -7,7 +7,8 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "build": "rimraf -rf dist && tsc -b && tsc-alias -p tsconfig.json && node build.js",
+    "clean": "rm -rf dist && rm -rf coverage",
+    "build": "npm run clean && tsc -b && tsc-alias -p tsconfig.json && node build.js",
     "start": "npm run build && sls offline start",
     "test": "jest",
     "format": "prettier --write \"src/**/*.ts\"",
