@@ -13,6 +13,7 @@ import {
 import { Config } from '../../../../src/config';
 import { People } from '../../../../src/domain/entities/people.entity';
 import { PeopleMysqlRepository } from '../../../../src/infrastructure/repositories/people-mysql.repository';
+import { PeopleDomain, PeopleMapper } from '../../../../src/infrastructure/mappers/people.mapper';
 
 jest.mock('@common');
 jest.mock('mysql2/promise');
@@ -96,10 +97,11 @@ describe('PeopleMysqlRepository', () => {
           })
         );
 
+      console.log(result);
       expect(mockDb.query).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
         people: [
-          {
+          PeopleMapper.toDomain({
             id: '5c9ad7f3-5df0-44e6-bea4-12349d8b1031',
             name: 'John Doe',
             height: 180,
@@ -109,7 +111,7 @@ describe('PeopleMysqlRepository', () => {
             eyeColor: 'blue',
             birthYear: '2024-01-12',
             gender: 'male',
-          },
+          } as PeopleDomain),
         ],
         total: 1,
         page: 1,
