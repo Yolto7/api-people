@@ -1,6 +1,7 @@
 import { format, createLogger, transports, Logger as WinstonLoggerType } from 'winston';
-import { Logger, Levels } from '../../domain/logger';
 import { ConsoleTransportInstance, FileTransportInstance } from 'winston/lib/winston/transports';
+
+import { Logger, Levels } from '../../domain/logger';
 
 interface Config {
   isDebug: boolean;
