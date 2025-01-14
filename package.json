@@ -10,7 +10,7 @@
     "clean": "rm -rf dist && rm -rf coverage",
     "build": "npm run clean && tsc -b && tsc-alias -p tsconfig.json && node build.js",
     "start": "npm run build && sls offline start",
-    "test": "jest",
+    "test": "jest --clearCache && jest",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "npm run format -- --check",
     "format:fix": "npm run format -- --write",

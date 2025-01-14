@@ -8,11 +8,11 @@ import {
   Order,
   Query,
   UserAuthProvider,
-} from '../../../../src/common';
-import { Config } from '../../../../src/config';
-import { People } from '../../../../src/domain/entities/people.entity';
-import { PeopleMysqlRepository } from '../../../../src/infrastructure/repositories/people-mysql.repository';
-import { PeopleDomain, PeopleMapper } from '../../../../src/infrastructure/mappers/people.mapper';
+} from '@common';
+import { Config } from '@config';
+import { People } from '@domain/entities/people.entity';
+import { PeopleMysqlRepository } from '@infrastructure/repositories/people-mysql.repository';
+import { PeopleDomain, PeopleMapper } from '@infrastructure/mappers/people.mapper';
 
 jest.mock('mysql2/promise');
 
