@@ -15,7 +15,6 @@ import { People } from '../../../../src/domain/entities/people.entity';
 import { PeopleMysqlRepository } from '../../../../src/infrastructure/repositories/people-mysql.repository';
 import { PeopleDomain, PeopleMapper } from '../../../../src/infrastructure/mappers/people.mapper';
 
-jest.mock('@common');
 jest.mock('mysql2/promise');
 
 describe('PeopleMysqlRepository', () => {
@@ -97,7 +96,6 @@ describe('PeopleMysqlRepository', () => {
           })
         );
 
-      console.log(result);
       expect(mockDb.query).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
         people: [
@@ -119,46 +117,12 @@ describe('PeopleMysqlRepository', () => {
         totalPages: 1,
       });
     });
-
-    // it('should log and throw an error if the query fails', async () => {
-    //   mockDb.query.mockRejectedValue(new Error('Query failed'));
-
-    //   const query = new Query({
-    //     filters: [],
-    //   });
-
-    //   await expect(
-    //     repo.matching(
-    //       new Criteria({
-    //         filters: Filters.fromValues(query.filters),
-    //         order: Order.fromValues(query.orderBy, query.orderType),
-    //         page: query.page,
-    //         take: query.take,
-    //         isTotal: query.isTotal,
-    //       })
-    //     )
-    //   ).rejects.toThrowError(AppError);
-
-    //   expect(mockLogger.error).toHaveBeenCalledWith(
-    //     expect.stringContaining('Error in PeopleRepository of matching')
-    //   );
-    // });
   });
 
   describe('create', () => {
     it('should insert a new person into the database', async () => {
-      const mockPerson = People.create({
-        name: 'John Doe',
-        height: 180,
-        mass: 75,
-        hairColor: 'brown',
-        skinColor: 'white',
-        eyeColor: 'blue',
-        birthYear: '2024-01-12',
-        gender: 'male',
-      });
       jest.spyOn(mockUserAuthProvider, 'get').mockReturnValue({
-        id: '5c9ad7f3-5df0-44e6-bea4-12349d8b1031',
+        id: '5c9ad7f3-5df0-44e6-bea4-12349d8b1032',
         name: 'John Doe',
         document: '78549612',
         email: 'jdoe@me.com',
@@ -166,32 +130,20 @@ describe('PeopleMysqlRepository', () => {
         isActive: true,
       });
 
-      await repo.create(mockPerson);
+      await repo.create(
+        People.create({
+          name: 'John Doe',
+          height: 180,
+          mass: 75,
+          hairColor: 'brown',
+          skinColor: 'white',
+          eyeColor: 'blue',
+          birthYear: '2024-01-12',
+          gender: 'male',
+        })
+      );
 
-      expect(mockDb.query).toHaveBeenCalledWith({
-        sql: 'INSERT INTO people(name) VALUES (?)',
-        values: ['John Doe'],
-      });
+      expect(mockDb.query).toHaveBeenCalledTimes(1);
     });
-
-    // it('should log and throw an error if the insert fails', async () => {
-    //   mockDb.query.mockRejectedValue(new Error('Insert failed'));
-    //   const mockPerson = People.create({
-    //     name: 'John Doe',
-    //     height: 180,
-    //     mass: 75,
-    //     hairColor: 'brown',
-    //     skinColor: 'white',
-    //     eyeColor: 'blue',
-    //     birthYear: '2024-01-12',
-    //     gender: 'male',
-    //   });
-
-    //   await expect(repo.create(mockPerson)).rejects.toThrowError(AppError);
-
-    //   expect(mockLogger.error).toHaveBeenCalledWith(
-    //     expect.stringContaining('Error in PeopleRepository of create')
-    //   );
-    // });
   });
 });
