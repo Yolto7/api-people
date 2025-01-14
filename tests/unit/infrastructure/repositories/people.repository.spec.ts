@@ -1,4 +1,5 @@
 import { FieldPacket, Pool, RowDataPacket } from 'mysql2/promise';
+
 import {
   Criteria,
   Filters,
@@ -87,16 +88,16 @@ describe('PeopleMysqlRepository', () => {
         .mockResolvedValueOnce([[mockPeopleData], [] as FieldPacket[]])
         .mockResolvedValueOnce([[{ total: 1 } as RowDataPacket], [] as FieldPacket[]]);
 
-      const query = new Query({ filters: [] });
-      const criteria = new Criteria({
-        filters: Filters.fromValues(query.filters),
-        order: Order.fromValues(query.orderBy, query.orderType),
-        page: query.page,
-        take: query.take,
-        isTotal: query.isTotal,
-      });
-
-      const result = await repository.matching(criteria);
+      const query = new Query({ filters: [] }),
+        result = await repository.matching(
+          new Criteria({
+            filters: Filters.fromValues(query.filters),
+            order: Order.fromValues(query.orderBy, query.orderType),
+            page: query.page,
+            take: query.take,
+            isTotal: query.isTotal,
+          })
+        );
 
       expect(mockDb.query).toHaveBeenCalledTimes(2);
       expect(result).toEqual({
