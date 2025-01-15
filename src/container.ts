@@ -77,7 +77,7 @@ export const loadContainer = (): AwilixContainer<Cradle> => {
     userAuthProvider: asClass(UserAuthProvider).singleton(),
 
     // Criteria
-    mysqlCriteriaConverter: asClass(MysqlCriteriaConverter).singleton().scoped(),
+    mysqlCriteriaConverter: asClass(MysqlCriteriaConverter).singleton(),
 
     // Repositories
     peopleMysqlRepository: asClass(PeopleMysqlRepository).scoped(),
