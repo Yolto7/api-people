@@ -7,6 +7,7 @@ const container = loadContainer(),
   controller = container.cradle.peopleController;
 
 export = {
+  getById: MiddyMiddleware.use(controller.getById.bind(controller), middlewares),
   search: MiddyMiddleware.use(controller.search.bind(controller), middlewares),
   getSwapiAll: MiddyMiddleware.use(controller.getSwapiAll.bind(controller), middlewares),
   create: MiddyMiddleware.use(controller.create.bind(controller), middlewares),

@@ -63,6 +63,17 @@ package:
     - node_modules/**
 
 functions:
+  getById:
+    handler: dist/index.getById
+    name: ${self:custom.prefixLambdaName}-getById
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-getById
+    events:
+      - http:
+          path: /{id}
+          method: get
+          cors: true
+
   search:
     handler: dist/index.search
     name: ${self:custom.prefixLambdaName}-search

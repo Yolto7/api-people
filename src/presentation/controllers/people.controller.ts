@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 
-import { AppSuccess } from '@common';
+import { AppSuccess, sanitize } from '@common';
 
 import { PeopleQueriesService } from '@application/services/queries/people.query.service';
 import { PeopleCreateCommandService } from '@application/services/commands/people-create.command.service';
@@ -12,6 +12,14 @@ export class PeopleController {
     private readonly peopleQueriesService: PeopleQueriesService,
     private readonly peopleCreateCommandService: PeopleCreateCommandService
   ) {}
+
+  async getById(event: APIGatewayProxyEvent) {
+    const person = await this.peopleQueriesService.getById(sanitize(event.pathParameters?.id));
+    return AppSuccess.status(200).json({
+      message: 'Person obtained successfully',
+      data: PeopleMapper.toPresentation(person),
+    });
+  }
 
   async search(_event: APIGatewayProxyEvent) {
     const { people, total, page, take, totalPages } = await this.peopleQueriesService.search();

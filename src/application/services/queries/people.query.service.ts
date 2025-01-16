@@ -9,6 +9,10 @@ export class PeopleQueriesService {
     private readonly swapiProxyPort: SwapiProxyPort
   ) {}
 
+  getById(id: string) {
+    return this.peopleDomainService.getById(id);
+  }
+
   search() {
     return this.peopleDomainService.matching({
       filters: [],
