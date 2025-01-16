@@ -1,10 +1,19 @@
 STAGE="dev"
 shift
 
-# Build
+# Remove old logs
 rm -rf logs
-npm run build
+
+# Prepare
+export SLS_DEBUG=*
+
+# Build
+if npm run build; then
+  echo "$(date '+%d/%m/%Y %H:%M:%S') The API in stage $STAGE built was successfully."
+else
+  echo "$(date '+%d/%m/%Y %H:%M:%S') The API in stage $STAGE built was failed."
+  exit 1
+fi
 
 # Debug
-export SLS_DEBUG=*
 node --inspect /home/joaquin/.nvm/versions/node/v21.7.1/bin/serverless offline start --stage $STAGE
