@@ -64,7 +64,7 @@ package:
 
 functions:
   getById:
-    handler: dist/index.getById
+    handler: dist/index.lambdas.getById
     name: ${self:custom.prefixLambdaName}-getById
     tags:
       NAME: ${self:custom.prefixLambdaName}-getById
@@ -86,7 +86,7 @@ functions:
           cors: true
 
   getSwapiAll:
-    handler: dist/index.getSwapiAll
+    handler: dist/index.lambdas.getSwapiAll
     name: ${self:custom.prefixLambdaName}-getSwapiAll
     tags:
       NAME: ${self:custom.prefixLambdaName}-getSwapiAll
@@ -97,7 +97,7 @@ functions:
           cors: true
 
   create:
-    handler: dist/index.create
+    handler: dist/index.lambdas.create
     name: ${self:custom.prefixLambdaName}-create
     tags:
       NAME: ${self:custom.prefixLambdaName}-create
