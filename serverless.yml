@@ -3,7 +3,7 @@ frameworkVersion: '3'
 
 custom:
   stage: ${opt:stage, "dev"}
-  prefix: cuidate
+  prefix: cuida
   stackNumber: '00'
   stackName: people
   prefixName: ${self:custom.prefix}-${self:custom.stage}
