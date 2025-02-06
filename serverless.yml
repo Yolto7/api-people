@@ -3,7 +3,7 @@ frameworkVersion: '3'
 
 custom:
   stage: ${opt:stage, "dev"}
-  prefix: cuida
+  prefix: doorman
   stackNumber: '00'
   stackName: people
   prefixName: ${self:custom.prefix}-${self:custom.stage}
@@ -30,7 +30,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ${opt:region, "us-east-1"}
-  profile: cuida-${self:custom.stage}
+  profile: ${self:custom.prefix}-${self:custom.stage}
   stage: ${self:custom.stage}
   stackName: ${self:custom.serviceName}
   timeout: 30
@@ -59,23 +59,23 @@ package:
   exclude:
     - ./**
   include:
-    - dist/index.js
+    - dist/index.mjs
     - node_modules/**
 
 functions:
-  getById:
-    handler: dist/index.getById
-    name: ${self:custom.prefixLambdaName}-getById
-    tags:
-      NAME: ${self:custom.prefixLambdaName}-getById
-    events:
-      - http:
-          path: /{id}
-          method: get
-          cors: true
+  # getById:
+  #   handler: dist/index.getById
+  #   name: ${self:custom.prefixLambdaName}-getById
+  #   tags:
+  #     NAME: ${self:custom.prefixLambdaName}-getById
+  #   events:
+  #     - http:
+  #         path: /{id}
+  #         method: get
+  #         cors: true
 
   search:
-    handler: dist/index.search
+    handler: dist/index.lambdas.search
     name: ${self:custom.prefixLambdaName}-search
     tags:
       NAME: ${self:custom.prefixLambdaName}-search
@@ -85,24 +85,24 @@ functions:
           method: get
           cors: true
 
-  getSwapiAll:
-    handler: dist/index.getSwapiAll
-    name: ${self:custom.prefixLambdaName}-getSwapiAll
-    tags:
-      NAME: ${self:custom.prefixLambdaName}-getSwapiAll
-    events:
-      - http:
-          path: /swapi
-          method: get
-          cors: true
+  # getSwapiAll:
+  #   handler: dist/index.getSwapiAll
+  #   name: ${self:custom.prefixLambdaName}-getSwapiAll
+  #   tags:
+  #     NAME: ${self:custom.prefixLambdaName}-getSwapiAll
+  #   events:
+  #     - http:
+  #         path: /swapi
+  #         method: get
+  #         cors: true
 
-  create:
-    handler: dist/index.create
-    name: ${self:custom.prefixLambdaName}-create
-    tags:
-      NAME: ${self:custom.prefixLambdaName}-create
-    events:
-      - http:
-          path: /
-          method: post
-          cors: true
+  # create:
+  #   handler: dist/index.create
+  #   name: ${self:custom.prefixLambdaName}-create
+  #   tags:
+  #     NAME: ${self:custom.prefixLambdaName}-create
+  #   events:
+  #     - http:
+  #         path: /
+  #         method: post
+  #         cors: true

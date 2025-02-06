@@ -15,7 +15,7 @@ const {
 
   DATABASE_HOST = '',
   DATABASE_PORT = 3306,
-  DATABASE_USER = '',
+  DATABASE_USER = 'a',
   DATABASE_PASSWORD = '',
   DATABASE_NAME = '',
 
@@ -26,7 +26,7 @@ const {
   SWAPI_API_BASE_URL = '',
 } = process.env;
 
-export const config: Config = {
+export const envs: Config = {
   NODE_ENV,
 
   AWS_REGION,

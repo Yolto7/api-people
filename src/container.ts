@@ -14,7 +14,7 @@ import {
   MysqlClientFactory,
 } from '@common';
 
-import { Config, config } from '@config';
+import { Config, envs } from '@config';
 import { PeopleCreateCommandService } from '@application/services/commands/people-create.command.service';
 import { PeopleQueriesService } from '@application/services/queries/people.query.service';
 import { PeopleDomainService } from '@domain/services/people.domain.service';
@@ -57,7 +57,7 @@ export const loadContainer = (): AwilixContainer<Cradle> => {
 
   container.register({
     // Config
-    config: asValue(config),
+    config: asValue(envs),
 
     // Logger
     logger: asClass(WinstonLogger)

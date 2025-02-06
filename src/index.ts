@@ -6,7 +6,7 @@ const container = loadContainer(),
   middlewares = [container.cradle.contextMiddleware.use(), container.cradle.errorInterceptor.use()],
   controller = container.cradle.peopleController;
 
-export = {
+export const lambdas = {
   getById: MiddyMiddleware.use(controller.getById.bind(controller), middlewares),
   search: MiddyMiddleware.use(controller.search.bind(controller), middlewares),
   getSwapiAll: MiddyMiddleware.use(controller.getSwapiAll.bind(controller), middlewares),

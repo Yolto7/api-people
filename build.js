@@ -1,19 +1,38 @@
-const esbuild = require('esbuild'),
-  { dependencies } = require('./package.json');
+import { build } from 'esbuild';
+import packageJson from './package.json' assert { type: 'json' };
+import fs from 'fs';
+import path from 'path';
 
-const buildPackage = async (entry, outdir) => {
-  await esbuild.build({
-    entryPoints: [entry],
-    outdir,
-    bundle: true,
-    minify: false,
-    platform: 'node',
-    target: 'node18',
-    sourcemap: true,
-    keepNames: true,
-    allowOverwrite: true,
-    external: Object.keys(dependencies),
+// Obtener todos los archivos .js en `dist`
+const getAllJsFiles = (dir) => {
+  const files = [];
+
+  fs.readdirSync(dir).forEach((item) => {
+    const fullPath = path.join(dir, item);
+    if (fs.statSync(fullPath).isDirectory()) {
+      files.push(...getAllJsFiles(fullPath)); // Recursivamente obtener archivos de subdirectorios
+    } else if (fullPath.endsWith('.js')) {
+      files.push(fullPath);
+    }
   });
+
+  return files;
 };
 
-buildPackage('dist/**/*.js', 'dist');
+// Carpeta de entrada y salida
+const inputDir = 'dist';
+const files = getAllJsFiles(inputDir);
+
+files.forEach(async (file) => {
+  await build({
+    entryPoints: [file],
+    outfile: file.replace(/\.js$/, '.mjs'), // Genera un archivo .mjs
+    format: 'esm', // Convertir a ESM
+    bundle: true, // Empaqueta cada archivo con sus dependencias
+    platform: 'node',
+    target: 'node18',
+    allowOverwrite: true,
+    sourcemap: true,
+    external: Object.keys(packageJson.dependencies),
+  });
+});
