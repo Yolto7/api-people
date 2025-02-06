@@ -15,7 +15,7 @@ const {
 
   DATABASE_HOST = '',
   DATABASE_PORT = 3306,
-  DATABASE_USER = 'a',
+  DATABASE_USER = '',
   DATABASE_PASSWORD = '',
   DATABASE_NAME = '',
 
