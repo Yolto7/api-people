@@ -63,16 +63,16 @@ package:
     - node_modules/**
 
 functions:
-  # getById:
-  #   handler: dist/index.getById
-  #   name: ${self:custom.prefixLambdaName}-getById
-  #   tags:
-  #     NAME: ${self:custom.prefixLambdaName}-getById
-  #   events:
-  #     - http:
-  #         path: /{id}
-  #         method: get
-  #         cors: true
+  getById:
+    handler: dist/index.getById
+    name: ${self:custom.prefixLambdaName}-getById
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-getById
+    events:
+      - http:
+          path: /{id}
+          method: get
+          cors: true
 
   search:
     handler: dist/index.lambdas.search
@@ -85,24 +85,24 @@ functions:
           method: get
           cors: true
 
-  # getSwapiAll:
-  #   handler: dist/index.getSwapiAll
-  #   name: ${self:custom.prefixLambdaName}-getSwapiAll
-  #   tags:
-  #     NAME: ${self:custom.prefixLambdaName}-getSwapiAll
-  #   events:
-  #     - http:
-  #         path: /swapi
-  #         method: get
-  #         cors: true
+  getSwapiAll:
+    handler: dist/index.getSwapiAll
+    name: ${self:custom.prefixLambdaName}-getSwapiAll
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-getSwapiAll
+    events:
+      - http:
+          path: /swapi
+          method: get
+          cors: true
 
-  # create:
-  #   handler: dist/index.create
-  #   name: ${self:custom.prefixLambdaName}-create
-  #   tags:
-  #     NAME: ${self:custom.prefixLambdaName}-create
-  #   events:
-  #     - http:
-  #         path: /
-  #         method: post
-  #         cors: true
+  create:
+    handler: dist/index.create
+    name: ${self:custom.prefixLambdaName}-create
+    tags:
+      NAME: ${self:custom.prefixLambdaName}-create
+    events:
+      - http:
+          path: /
+          method: post
+          cors: true
