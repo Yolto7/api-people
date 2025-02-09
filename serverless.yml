@@ -3,13 +3,14 @@ frameworkVersion: '3'
 
 custom:
   stage: ${opt:stage, "dev"}
-  prefix: cuida
+  prefix: doorman
   stackNumber: '00'
   stackName: people
   prefixName: ${self:custom.prefix}-${self:custom.stage}
   prefixLambdaName: ${self:custom.prefixName}-ld-${self:custom.stackNumber}-${self:custom.stackName}
   serviceName: ${self:custom.prefixName}-st-${self:custom.stackNumber}-${self:custom.stackName}
   roleName: ${self:custom.prefixName}-role-${self:custom.stackNumber}-${self:custom.stackName}
+  appBucketShared: ${self:custom.prefixName}-bucket-${self:custom.stackNumber}-app-shared
   serverless-offline:
     httpPort: 3000
     noPrependStageInUrl: true
@@ -34,6 +35,8 @@ provider:
   stackName: ${self:custom.serviceName}
   timeout: 30
   apiName: ${self:service}
+  deploymentBucket:
+    name: ${self:custom.appBucketShared}
   stackTags:
     ENV: ${self:custom.stage}
   iam:
@@ -58,7 +61,7 @@ package:
 
 functions:
   getById:
-    handler: dist/index.lambdas.getById
+    handler: dist/index.getById
     name: ${self:custom.prefixLambdaName}-getById
     tags:
       NAME: ${self:custom.prefixLambdaName}-getById
@@ -69,7 +72,7 @@ functions:
           cors: true
 
   search:
-    handler: dist/index.lambdas.search
+    handler: dist/index.search
     name: ${self:custom.prefixLambdaName}-search
     tags:
       NAME: ${self:custom.prefixLambdaName}-search
@@ -80,7 +83,7 @@ functions:
           cors: true
 
   getSwapiAll:
-    handler: dist/index.lambdas.getSwapiAll
+    handler: dist/index.getSwapiAll
     name: ${self:custom.prefixLambdaName}-getSwapiAll
     tags:
       NAME: ${self:custom.prefixLambdaName}-getSwapiAll
@@ -91,7 +94,7 @@ functions:
           cors: true
 
   create:
-    handler: dist/index.lambdas.create
+    handler: dist/index.create
     name: ${self:custom.prefixLambdaName}-create
     tags:
       NAME: ${self:custom.prefixLambdaName}-create
