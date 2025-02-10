@@ -47,6 +47,18 @@ const buildFiles = async () => {
 
   // Espera a que todas las construcciones finalicen
   await Promise.all(buildPromises);
+
+  // Eliminar index.js e index.js.map si existen
+  const filesToDelete = ['dist/index.js', 'dist/index.js.map'];
+  for (const file of filesToDelete) {
+    try {
+      await fs.unlink(file);
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        console.error(`Error al eliminar ${file}:`, err);
+      }
+    }
+  }
 };
 
 // Ejecutar el proceso de construcción
