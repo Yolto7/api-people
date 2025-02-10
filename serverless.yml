@@ -3,14 +3,13 @@ frameworkVersion: '3'
 
 custom:
   stage: ${opt:stage, "dev"}
-  prefix: doorman
+  prefix: cuida
   stackNumber: '00'
   stackName: people
   prefixName: ${self:custom.prefix}-${self:custom.stage}
   prefixLambdaName: ${self:custom.prefixName}-ld-${self:custom.stackNumber}-${self:custom.stackName}
   serviceName: ${self:custom.prefixName}-st-${self:custom.stackNumber}-${self:custom.stackName}
   roleName: ${self:custom.prefixName}-role-${self:custom.stackNumber}-${self:custom.stackName}
-  appBucketShared: ${self:custom.prefixName}-bucket-${self:custom.stackNumber}-app-shared
   serverless-offline:
     httpPort: 3000
     noPrependStageInUrl: true
@@ -35,8 +34,6 @@ provider:
   stackName: ${self:custom.serviceName}
   timeout: 30
   apiName: ${self:service}
-  deploymentBucket:
-    name: ${self:custom.appBucketShared}
   stackTags:
     ENV: ${self:custom.stage}
   iam:
