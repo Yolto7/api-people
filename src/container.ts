@@ -62,7 +62,9 @@ export const loadContainer = (): AwilixContainer<Cradle> => {
     // Logger
     logger: asClass(WinstonLogger)
       .inject((container: AwilixContainer) => ({
-        isDebug: container.cradle.config.isDebug,
+        config: {
+          isDebug: container.cradle.config.isDebug,
+        },
       }))
       .singleton(),
 

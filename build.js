@@ -1,7 +1,14 @@
 import { build } from 'esbuild';
-import packageJson from './package.json' assert { type: 'json' };
+// import packageJson from './package.json' assert { type: 'json' };
 import fs from 'fs/promises';
 import path from 'path';
+
+async function loadPackageJson() {
+  const data = await fs.readFile('./package.json', 'utf8');
+  return JSON.parse(data);
+}
+
+const packageJson = await loadPackageJson();
 
 // Obtener todos los archivos .js en `dist` de forma asincrónica
 const getAllJsFiles = async (dir) => {
@@ -37,6 +44,7 @@ const buildFiles = async () => {
       outfile: file.replace(/\.js$/, '.mjs'), // Genera un archivo .mjs
       format: 'esm', // Convertir a ESM
       bundle: true, // Empaquetar cada archivo con sus dependencias
+      minify: false,
       platform: 'node',
       target: 'node18',
       allowOverwrite: true,
